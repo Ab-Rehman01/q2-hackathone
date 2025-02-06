@@ -43,74 +43,22 @@
 //   );
 // }"use client";
 
-"use client";
 
-import { useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+// import { Suspense } from "react";
+// import ProductsGrid from "../../components/products/productsGrid";
 
-// Fetch product data
-async function fetchProductData(id: string) {
-  const res = await fetch(`https://bullet-mart.net.pk/wp-json/wp/v2/product/${id}`);
-  if (!res.ok) {
-    throw new Error('Failed to fetch product data');
-  }
-  return res.json();
-}
 
-// Fetch media data (for product image)
-async function fetchMediaData(mediaId: number) {
-  const res = await fetch(`https://bullet-mart.net.pk/wp-json/wp/v2/media/${mediaId}`);
-  if (!res.ok) {
-    throw new Error('Failed to fetch media data');
-  }
-  return res.json();
-}
+// // Correct import (ensure casing matches the exported component)
 
-export default function ProductPage() {
-  const { id } = useParams(); // Dynamic ID from URL
-  const [product, setProduct] = useState(null);
-  const [image, setImage] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (id) {
-      // Fetch product data
-      fetchProductData(id)
-        .then((data) => {
-          setProduct(data);
-
-          // Fetch image if featured_media exists
-          if (data.featured_media) {
-            return fetchMediaData(data.featured_media);
-          }
-          return null;
-        })
-        .then((mediaData) => {
-          if (mediaData) {
-            setImage(mediaData.source_url);
-          }
-        })
-        .catch((err) => setError(err.message));
-    }
-  }, [id]);
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
-
-  if (!product) {
-    return <div>Loading...</div>;
-  }
-
-  return (
-    <div>
-      <h1>{product.title.rendered}</h1>
-      <div dangerouslySetInnerHTML={{ __html: product.content.rendered }} />
-      {image ? (
-        <img src={image} alt={product.title.rendered} />
-      ) : (
-        <p>No image available</p>
-      )}
-    </div>
-  );
-}
+// export default function ProductsPage() {
+//   return (
+//     <>
+//       <h1>All Products</h1>
+//       <Suspense fallback={<div>Loading...</div>}>
+//         {/* Correct component usage */}
+//    <ProductsGrid/>
+//       </Suspense>
+//     </>
+//   );
+// }

@@ -23,7 +23,8 @@
 
 
 "use client";
-import Navbar from "./components/Navbar";
+import { Navbar } from "@/app/components/Navbar";
+
 import Footer from "./components/Footer";
 import "./globals.css";
 

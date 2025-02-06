@@ -154,27 +154,56 @@
 //   );
 // }
 
+import { notFound } from "next/navigation";
+import Image from "next/image";
 
-import { addToCart } from '@/utils/woocommerce'; // Import function
+// ✅ API se product data fetch karne ka function
+async function getProduct(id: string) {
+  const res = await fetch(
+    `https://bullet-mart.net.pk/wp-json/wp/v2/product/${id}?_embed`
+  );
 
-export default function ProductPage() {
-  // ...
+  if (!res.ok) {
+    return notFound();
+  }
 
-  const handleAddToCart = async () => {
-    try {
-      await addToCart(Number(id));
-      alert('Product added to cart successfully!');
-    } catch (error) {
-      alert(error.message);
-    }
-  };
+  return res.json();
+}
+
+// ✅ Single Product Page Component
+export default async function ProductPage({ params }: { params: { id: string } }) {
+  const product = await getProduct(params.id);
 
   return (
-    <div className="max-w-5xl mx-auto p-6">
-      {/* Product Details */}
-      <button 
-        onClick={handleAddToCart} 
-        className="bg-blue-500 text-white px-6 py-2 rounded-lg shadow hover:bg-blue-600 transition">
+    <div className="max-w-4xl mx-auto p-6">
+      {/* Product Title */}
+      <h1 className="text-2xl font-bold mb-4">{product.title.rendered}</h1>
+
+      {/* Product Image */}
+      <div className="flex justify-center mb-4">
+        {product?._embedded?.["wp:featuredmedia"]?.[0]?.source_url ? (
+          <Image
+            src={product._embedded["wp:featuredmedia"][0].source_url}
+            alt={product.title.rendered}
+            width={500}
+            height={500}
+            className="rounded-lg shadow-lg"
+          />
+        ) : (
+          <p className="text-gray-500">No image available</p>
+        )}
+      </div>
+
+      {/* Product Description */}
+      <div
+        className="text-gray-700"
+        dangerouslySetInnerHTML={{ __html: product.content.rendered }}
+      />
+
+      {/* Add to Cart Button */}
+      <button
+        className="mt-4 bg-blue-500 text-white px-6 py-2 rounded-lg shadow hover:bg-blue-600 transition"
+      >
         Add to Cart
       </button>
     </div>
