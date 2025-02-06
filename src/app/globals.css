@@ -1,0 +1,161 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@layer base {
+  /* globals.css */
+:root {
+  --background: 0, 0%, 100%;
+  --foreground: 0, 0%, 0%;
+  --card: 240, 100%, 98%;
+  --card-foreground: 240, 20%, 20%;
+  --primary: 200, 100%, 50%;
+  --primary-foreground: 0, 0%, 100%;
+  --secondary: 100, 50%, 70%;
+  --secondary-foreground: 0, 0%, 0%;
+  --muted: 210, 10%, 85%;
+  --muted-foreground: 0, 0%, 20%;
+  --accent: 60, 100%, 50%;
+  --accent-foreground: 0, 0%, 100%;
+  --destructive: 0, 100%, 50%;
+  --destructive-foreground: 0, 0%, 100%;
+  --border: 0, 0%, 85%;
+  --input: 0, 0%, 90%;
+  --ring: 0, 0%, 80%;
+  --chart-1: 0, 100%, 50%;
+  --chart-2: 120, 100%, 50%;
+  --chart-3: 240, 100%, 50%;
+  --chart-4: 60, 100%, 50%;
+  --chart-5: 300, 100%, 50%;
+  --radius: 0.375rem;
+}
+
+  .dark {
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 9%;
+    --secondary: 0 0% 14.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 0 0% 14.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 0 0% 83.1%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+.products-page {
+  padding: 20px;
+  text-align: center;
+}
+
+.product-list {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 4 products per row */
+  gap: 20px; /* Space between products */
+  margin-top: 20px;
+}
+
+.product-card {
+  display: flex;
+  flex-direction: column; /* Arrange items vertically */
+  justify-content: space-between; /* Space out the elements inside the card */
+  height: 100%; /* Ensure the card has a defined height */
+  padding: 10px; /* Add padding inside the card */
+  border: 1px solid #ddd; /* Light border for product card */
+  border-radius: 8px; /* Rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Light shadow for card */
+  background-color: #fff; /* White background */
+}
+
+.product-card h2 {
+  font-weight: bold; /* Make title bold */
+  font-size: 18px; /* Adjust font size for title */
+  margin-bottom: 10px; /* Add space between title and description */
+  text-align: left; /* Align title to the left */
+}
+.product-card img {
+  height: 250px; /* Set image height */
+  width: 100%; /* Ensure image fits the width */
+  object-fit: cover; /* Cover the area without distortion */
+  border-radius: 5px; /* Rounded corners for image */
+  margin-bottom: 15px; /* Add space between image and title */
+}
+
+.product-description {
+  flex-grow: 1; /* Makes sure the description area expands */
+  font-size: 14px;
+  text-align: justify; /* Justifies the description text */
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.add-to-cart-btn {
+  margin-top: 10px; /* Add space above the button */
+  padding: 10px 20px; /* Adjust padding for better button size */
+  background-color: #4CAF50; /* Green background */
+  color: white; /* Text color */
+  border: none; /* Remove border */
+  border-radius: 5px; /* Rounded corners */
+  cursor: pointer; /* Show pointer on hover */
+  font-size: 14px; /* Adjust text size */
+  text-align: center; /* Center align the text */
+}
+.add-to-cart-btn:hover {
+  background-color: #45a049; /* Darker green on hover */
+}
+.details-link {
+  margin-top: 10px;
+  display: inline-block;
+  color: #007bff;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.details-link:hover {
+  text-decoration: underline;
+}
+
+.product-card p {
+  font-size: 14px; /* Adjust font size for description */
+  line-height: 1.5; /* Line height for better readability */
+  overflow: hidden; /* Ensure text doesn’t overflow */
+  text-overflow: ellipsis; /* Show ellipsis for long text */
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* Limit to 3 lines */
+  -webkit-box-orient: vertical;
+  margin-bottom: 15px; /* Add space after description */
+}
