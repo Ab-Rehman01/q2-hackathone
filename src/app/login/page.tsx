@@ -65,8 +65,9 @@ export default function LoginPage() {
         </div>
 
         <p className="text-sm text-center mt-4">
-          Don't have an account? <a href="/register" className="text-blue-500">Register</a>
-        </p>
+  Don't have an account? <a href="/register" className="text-blue-500">Register</a>
+</p>
+
       </div>
     </div>
   );
