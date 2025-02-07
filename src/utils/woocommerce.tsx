@@ -62,7 +62,7 @@
 //     throw new Error("Failed to add product to cart");
 //   }
 // };
-
+// src/utils/woocommerce.ts
 import axios from "axios";
 
 // WooCommerce API Config
@@ -74,7 +74,7 @@ const api = axios.create({
   },
 });
 
-// Function to get products
+// ✅ Function to get products
 export const getProducts = async () => {
   try {
     const response = await api.get("/products");
@@ -82,6 +82,21 @@ export const getProducts = async () => {
   } catch (error) {
     console.error("Error fetching products:", error);
     return [];
+  }
+};
+
+// ✅ Function to add product to cart
+export const addToCart = async (productId: number, quantity: number = 1) => {
+  try {
+    const response = await api.post("/cart/add", {
+      product_id: productId,
+      quantity: quantity,
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Error adding to cart:", error);
+    throw new Error("Failed to add product to cart");
   }
 };
 
