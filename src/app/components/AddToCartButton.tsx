@@ -44,7 +44,11 @@ export default function AddToCartButton({ productId }: { productId: number }) {
       await addToCart(productId, 1);
       alert("Product added to cart successfully!");
     } catch (error) {
-      alert("Error: " + error.message);
+      if (error instanceof Error) {
+        alert("Error: " + error.message);
+      } else {
+        alert("An unknown error occurred.");
+      }
     }
     setLoading(false);
   };
