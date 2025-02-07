@@ -14,9 +14,9 @@ export default function RegisterPage() {
     try {
       await registerUser(email, password, username);
       window.location.href = "/login";
-    } catch (err: unknown) {
+    } catch (err: unknown) {  // Fixed error type
       if (err instanceof Error) {
-        setError(err.message);
+        setError(err.message);  // Properly access message
       } else {
         setError("An unexpected error occurred.");
       }
