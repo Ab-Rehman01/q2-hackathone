@@ -1,77 +1,25 @@
-// "use client";
-// import { useState } from "react";
-// import { useRouter } from "next/navigation";
-// import { registerUser } from "@/utils/auth";
-
-// export default function RegisterPage() {
-//   const [username, setUsername] = useState("");
-//   const [email, setEmail] = useState("");
-//   const [password, setPassword] = useState("");
-//   const [error, setError] = useState<string | null>(null);
-//   const router = useRouter();
-
-//   const handleRegister = async (e: React.FormEvent) => {
-//     e.preventDefault();
-//     setError(null);
-
-//     try {
-//       await registerUser(email, username, password);
-//       router.push("/login"); // رجسٹریشن کے بعد یوزر کو لاگ ان پیج پر لے جائیں
-//     } catch (err) {
-//       setError("Registration failed. Try again.");
-//     }
-//   };
-
-//   return (
-//     <div>
-//       <h1>Register</h1>
-//       {error && <p style={{ color: "red" }}>{error}</p>}
-//       <form onSubmit={handleRegister}>
-//         <input
-//           type="text"
-//           placeholder="Username"
-//           value={username}
-//           onChange={(e) => setUsername(e.target.value)}
-//           required
-//         />
-//         <input
-//           type="email"
-//           placeholder="Email"
-//           value={email}
-//           onChange={(e) => setEmail(e.target.value)}
-//           required
-//         />
-//         <input
-//           type="password"
-//           placeholder="Password"
-//           value={password}
-//           onChange={(e) => setPassword(e.target.value)}
-//           required
-//         />
-//         <button type="submit">Register</button>
-//       </form>
-//     </div>
-//   );
-// }
-
-
 "use client";
 import { useState } from "react";
 import { registerUser } from "@/utils/auth";
 
 export default function RegisterPage() {
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [username, setUsername] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [error, setError] = useState<string | null>(null);
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
     try {
       await registerUser(email, password, username);
       window.location.href = "/login";
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("An unexpected error occurred.");
+      }
     }
   };
 

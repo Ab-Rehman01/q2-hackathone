@@ -2,13 +2,20 @@
 import { useEffect, useState } from "react";
 import { getUserProfile } from "@/utils/auth";
 
+type User = {
+  username: string;
+  email: string;
+};
+
 export default function ProfilePage() {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
-      getUserProfile(token).then(setUser).catch(console.error);
+      getUserProfile(token)
+        .then((profile: User) => setUser(profile))
+        .catch((error) => console.error("Error fetching profile:", error));
     }
   }, []);
 

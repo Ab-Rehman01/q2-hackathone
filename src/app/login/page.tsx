@@ -4,18 +4,23 @@ import { loginUser } from "@/utils/auth";
 import { signIn } from "next-auth/react";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [error, setError] = useState<string | null>(null);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
     try {
       const user = await loginUser(email, password);
       console.log("Logged in:", user);
       window.location.href = "/profile";
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("An unexpected error occurred.");
+      }
     }
   };
 
@@ -65,9 +70,8 @@ export default function LoginPage() {
         </div>
 
         <p className="text-sm text-center mt-4">
-  Don&apos;t have an account? <a href="/register" className="text-blue-500">Register</a>
-</p>
-
+          Don't have an account? <a href="/register" className="text-blue-500">Register</a>
+        </p>
       </div>
     </div>
   );
