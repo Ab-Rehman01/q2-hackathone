@@ -60,45 +60,45 @@
 
 
 
-"use client";
-import { createContext, useContext, useEffect, useState } from "react";
+// "use client";
+// import { createContext, useContext, useEffect, useState } from "react";
 
-type CartItem = {
-  key: string;
-  id: number;
-  name: string;
-  quantity: number;
-  totals: {
-    line_total: string;
-    line_subtotal: string;
-  };
-};
+// type CartItem = {
+//   key: string;
+//   id: number;
+//   name: string;
+//   quantity: number;
+//   totals: {
+//     line_total: string;
+//     line_subtotal: string;
+//   };
+// };
 
-const CartContext = createContext<any>(null);
+// const CartContext = createContext<any>(null);
 
-export const CartProvider = ({ children }: { children: React.ReactNode }) => {
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+// export const CartProvider = ({ children }: { children: React.ReactNode }) => {
+//   const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
-  const fetchCart = async () => {
-    try {
-      const response = await fetch("https://bullet-mart.net.pk/wp-json/wc/store/cart/items");
-      if (!response.ok) throw new Error("Failed to fetch cart data");
-      const data: CartItem[] = await response.json();
-      setCartItems(data);
-    } catch (err) {
-      console.error("Error fetching cart:", err);
-    }
-  };
+//   const fetchCart = async () => {
+//     try {
+//       const response = await fetch("https://bullet-mart.net.pk/wp-json/wc/store/cart/items");
+//       if (!response.ok) throw new Error("Failed to fetch cart data");
+//       const data: CartItem[] = await response.json();
+//       setCartItems(data);
+//     } catch (err) {
+//       console.error("Error fetching cart:", err);
+//     }
+//   };
 
-  useEffect(() => {
-    fetchCart();
-  }, []);
+//   useEffect(() => {
+//     fetchCart();
+//   }, []);
 
-  return (
-    <CartContext.Provider value={{ cartItems, fetchCart }}>
-      {children}
-    </CartContext.Provider>
-  );
-};
+//   return (
+//     <CartContext.Provider value={{ cartItems, fetchCart }}>
+//       {children}
+//     </CartContext.Provider>
+//   );
+// };
 
-export const useCart = () => useContext(CartContext);
+// export const useCart = () => useContext(CartContext);

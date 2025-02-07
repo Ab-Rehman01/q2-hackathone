@@ -391,17 +391,26 @@
 
 // export default ProductsGrid;
 
-
-
 'use client';
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import api from '@/utils/woocommerce'; // WooCommerce API instance
+import Image from 'next/image';
+
+// ✅ Define Product Type
+interface Product {
+  id: number;
+  name: string;
+  description?: string;
+  sale_price?: string;
+  regular_price: string;
+  images?: { src: string }[];
+}
 
 const ProductsGrid = () => {
-  const [products, setProducts] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -424,37 +433,6 @@ const ProductsGrid = () => {
     return html.replace(/<\/?[^>]+(>|$)/g, '');
   };
 
-  // ✅ WooCommerce میں پروڈکٹ Cart میں شامل کرنے کا فنکشن
-  const handleAddToCartForm = async (productId: number) => {
-    try {
-      const formData = new URLSearchParams();
-      formData.append('product_id', productId.toString());
-      formData.append('quantity', '1');
-
-      const response = await fetch('/?wc-ajax=add_to_cart', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: formData.toString(),
-        credentials: 'include',
-      });
-
-      const result = await response.json();
-
-      if (result.error) {
-        throw new Error(result.error);
-      }
-
-      alert('✅ پروڈکٹ کامیابی سے Cart میں شامل کر دیا گیا!');
-      window.location.href = '/cart'; // ✅ Cart Page پر Redirect
-
-    } catch (error) {
-      console.error('🚨 Error adding product to cart:', error);
-      alert('❌ Cart میں پروڈکٹ شامل کرنے میں ناکامی۔ براہ کرم دوبارہ کوشش کریں۔');
-    }
-  };
-
   if (loading) {
     return <p>...لوڈ ہو رہا ہے</p>;
   }
@@ -470,39 +448,40 @@ const ProductsGrid = () => {
         {products.map((product) => (
           <div key={product.id} className="product-card border rounded-lg p-4 shadow-md">
             <h2 className="font-semibold text-lg">{product.name}</h2>
-            <img
+
+            {/* ✅ Replace <img> with Next.js <Image> */}
+            <Image
               src={product.images?.[0]?.src || 'https://via.placeholder.com/150'}
               alt={product.name || 'Product Image'}
+              width={300}
+              height={300}
               className="product-image w-full h-48 object-cover rounded-md"
             />
+
             <p className="product-description text-sm text-gray-500">
               {removeHtmlTags(product.description || '').slice(0, 100)}...
             </p>
+
             <div className="product-prices mt-2">
               {product.sale_price ? (
                 <>
-                  <p className="text-red-500 font-semibold">
-                    سیل پرائس: Rs. {product.sale_price}
-                  </p>
-                  <p className="text-gray-500 line-through">
-                    ریگولر پرائس: Rs. {product.regular_price}
-                  </p>
+                  <p className="text-red-500 font-semibold">سیل پرائس: Rs. {product.sale_price}</p>
+                  <p className="text-gray-500 line-through">ریگولر پرائس: Rs. {product.regular_price}</p>
                 </>
               ) : (
                 <p className="font-semibold">پرائس: Rs. {product.regular_price}</p>
               )}
             </div>
+
             <Link href={`/products/${product.id}`} className="text-blue-600 underline mt-2 block">
               مزید تفصیل
             </Link>
-            {/* ✅ "Add to Cart" فارم */}
+
+            {/* ✅ "Add to Cart" Form */}
             <form action="?wc-ajax=add_to_cart" method="post" className="mt-2">
               <input type="hidden" name="product_id" value={product.id} />
               <input type="hidden" name="quantity" value="1" />
-              <button
-                type="submit"
-                className="add-to-cart-btn bg-blue-500 text-white py-2 px-4 rounded-md"
-              >
+              <button type="submit" className="add-to-cart-btn bg-blue-500 text-white py-2 px-4 rounded-md">
                 Add to Cart
               </button>
             </form>
@@ -514,5 +493,3 @@ const ProductsGrid = () => {
 };
 
 export default ProductsGrid;
-
-

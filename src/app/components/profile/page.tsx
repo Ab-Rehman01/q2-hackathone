@@ -8,8 +8,7 @@ type User = {
 };
 
 export default function ProfilePage() {
-  const [user, setUser] = useState<any>(null);
-
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
