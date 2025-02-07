@@ -14,8 +14,8 @@ export default function ProfilePage() {
     const token = localStorage.getItem("token");
     if (token) {
       getUserProfile(token)
-        .then((profile: User) => setUser(profile))
-        .catch((error) => console.error("Error fetching profile:", error));
+        .then((profile: User) => setUser(profile)) // ✅ Explicitly typed User
+        .catch((error: unknown) => console.error("Error fetching profile:", error)); // ✅ Typed error as unknown
     }
   }, []);
 

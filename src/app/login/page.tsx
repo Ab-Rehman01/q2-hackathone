@@ -15,9 +15,9 @@ export default function LoginPage() {
       const user = await loginUser(email, password);
       console.log("Logged in:", user);
       window.location.href = "/profile";
-    } catch (err: unknown) {  // Fixed error type
+    } catch (err: unknown) {  // ✅ Use unknown instead of any
       if (err instanceof Error) {
-        setError(err.message);  // Properly access message
+        setError(err.message);  // ✅ Correct way to access message
       } else {
         setError("An unexpected error occurred.");
       }

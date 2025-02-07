@@ -405,7 +405,7 @@ interface Product {
   description?: string;
   sale_price?: string;
   regular_price: string;
-  images?: { src: string }[];
+  images?: { id: number; src: string; alt?: string }[];
 }
 
 const ProductsGrid = () => {
@@ -416,7 +416,7 @@ const ProductsGrid = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await api.get('products');
+        const response = await api.get<Product[]>('products'); // ✅ Typed API response
         setProducts(response.data);
       } catch (err) {
         setError('پراڈکٹس لوڈ کرنے میں مسئلہ ہے۔ براہ کرم دوبارہ کوشش کریں۔');
@@ -449,14 +449,24 @@ const ProductsGrid = () => {
           <div key={product.id} className="product-card border rounded-lg p-4 shadow-md">
             <h2 className="font-semibold text-lg">{product.name}</h2>
 
-            {/* ✅ Replace <img> with Next.js <Image> */}
-            <Image
-              src={product.images?.[0]?.src || 'https://via.placeholder.com/150'}
-              alt={product.name || 'Product Image'}
-              width={300}
-              height={300}
-              className="product-image w-full h-48 object-cover rounded-md"
-            />
+            {/* ✅ Improved image handling */}
+            {product.images?.length ? (
+              <Image
+                src={product.images[0].src}
+                alt={product.images[0].alt || 'Product Image'}
+                width={300}
+                height={300}
+                className="product-image w-full h-48 object-cover rounded-md"
+              />
+            ) : (
+              <Image
+                src="https://via.placeholder.com/150"
+                alt="Placeholder Image"
+                width={300}
+                height={300}
+                className="product-image w-full h-48 object-cover rounded-md"
+              />
+            )}
 
             <p className="product-description text-sm text-gray-500">
               {removeHtmlTags(product.description || '').slice(0, 100)}...
