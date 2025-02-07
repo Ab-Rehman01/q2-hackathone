@@ -59,12 +59,20 @@
 //     </div>
 //   );
 // }
-
 "use client";
 import { useEffect, useState } from "react";
 
+type CartItem = {
+  key: string;
+  name: string;
+  quantity: number;
+  totals: {
+    line_total: string;
+  };
+};
+
 export default function CartPage() {
-  const [cartItems, setCartItems] = useState([]);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]); // Type added
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -74,7 +82,7 @@ export default function CartPage() {
         const response = await fetch("https://bullet-mart.net.pk/wp-json/wc/store/cart/items");
         if (!response.ok) throw new Error("Failed to fetch cart data");
 
-        const data = await response.json();
+        const data: CartItem[] = await response.json(); // Type added
         setCartItems(data);
       } catch (err) {
         if (err instanceof Error) {
