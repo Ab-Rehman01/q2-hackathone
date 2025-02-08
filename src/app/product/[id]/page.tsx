@@ -209,13 +209,11 @@
 //     </div>
 //   );
 // }
-
 "use client";
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
 
-// Define a Product type (adjust properties as per WooCommerce response)
 interface Product {
   id: number;
   title: { rendered: string };
@@ -224,7 +222,6 @@ interface Product {
   };
 }
 
-// Fetch product data function
 async function getProduct(id: string): Promise<Product> {
   const res = await fetch(
     `https://bullet-mart.net.pk/wp-json/wp/v2/product/${id}?_embed`
@@ -238,27 +235,34 @@ async function getProduct(id: string): Promise<Product> {
 }
 
 export default function ProductPage({ params }: { params: { id: string } }) {
-  const [loading, setLoading] = useState(false);
-  const [product, setProduct] = useState<Product | null>(null); // ✅ Fixed type
+  const [product, setProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    setLoading(true);
     setError(null);
+
     getProduct(params.id)
-      .then(setProduct)
-      .catch((err) => setError(err.message));
+      .then((data) => {
+        setProduct(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError(err.message); // ✅ error اب استعمال ہو رہا ہے
+        setLoading(false);
+      });
   }, [params.id]);
 
-  if (error) return <p className="text-red-500">Error: {error}</p>;
-  if (!product) return <p>Loading product...</p>;
+  if (loading) return <p className="text-blue-500">Loading product...</p>;
+  if (error) return <p className="text-red-500">Error: {error}</p>; // ✅ error اب استعمال ہو رہا ہے
 
   return (
     <div className="max-w-4xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-4">{product.title.rendered}</h1>
+      <h1 className="text-2xl font-bold mb-4">{product?.title.rendered}</h1>
 
-      {/* Product Image */}
       <div className="flex justify-center mb-4">
-        {product._embedded?.["wp:featuredmedia"]?.[0]?.source_url && (
+        {product?._embedded?.["wp:featuredmedia"]?.[0]?.source_url && (
           <Image
             src={product._embedded["wp:featuredmedia"][0].source_url}
             alt={product.title.rendered}
@@ -271,3 +275,4 @@ export default function ProductPage({ params }: { params: { id: string } }) {
     </div>
   );
 }
+
