@@ -210,7 +210,6 @@
 //   );
 // }
 
-
 "use client"; // 👈 Client-Side Rendering Enable
 
 import { useState, useEffect } from "react";
@@ -219,7 +218,7 @@ import Image from "next/image";
 // ✅ WooCommerce API سے Product Data Fetch کرنے کا Function (Client-Side)
 async function getProduct(id: string) {
   const res = await fetch(
-    `https://bullet-mart.net.pk/wp-json/wp/v2/product/${id}?_embed`
+    `https://bullet-mart.net.pk/wp-json/wp/v2/product/${id}?_embed` // ✅ Fixed Backticks
   );
 
   if (!res.ok) {
@@ -300,9 +299,9 @@ export default function ProductPage({ params }: { params: { id: string } }) {
 
       {/* Add to Cart Button */}
       <button
-        className={`mt-4 bg-blue-500 text-white px-6 py-2 rounded-lg shadow ${
+        className={`mt-4 bg-blue-500 text-white px-6 py-2 rounded-lg shadow transition ${
           loading ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-600"
-        } transition`}
+        }`}
         onClick={async () => {
           setLoading(true);
           try {
