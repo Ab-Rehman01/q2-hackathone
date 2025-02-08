@@ -210,15 +210,24 @@
 //   );
 // }
 
-"use client"; // 👈 Client-Side Rendering Enable
+"use client";
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
 
-// ✅ WooCommerce API سے Product Data Fetch کرنے کا Function (Client-Side)
-async function getProduct(id: string) {
+// Define a Product type (adjust properties as per WooCommerce response)
+interface Product {
+  id: number;
+  title: { rendered: string };
+  _embedded?: {
+    ["wp:featuredmedia"]?: [{ source_url: string }];
+  };
+}
+
+// Fetch product data function
+async function getProduct(id: string): Promise<Product> {
   const res = await fetch(
-    `https://bullet-mart.net.pk/wp-json/wp/v2/product/${id}?_embed` // ✅ Fixed Backticks
+    `https://bullet-mart.net.pk/wp-json/wp/v2/product/${id}?_embed`
   );
 
   if (!res.ok) {
@@ -228,41 +237,13 @@ async function getProduct(id: string) {
   return res.json();
 }
 
-// ✅ "Add to Cart" function (Client-Side Only)
-async function addToCart(productId: number) {
-  try {
-    const res = await fetch(
-      "https://bullet-mart.net.pk/wp-json/wc/store/cart/add-item",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          id: productId,
-          quantity: 1,
-        }),
-      }
-    );
-
-    if (!res.ok) {
-      throw new Error("Failed to add item to cart");
-    }
-
-    return await res.json();
-  } catch (error) {
-    console.error("Error adding to cart:", error);
-    throw error;
-  }
-}
-
-// ✅ Single Product Page Component
 export default function ProductPage({ params }: { params: { id: string } }) {
   const [loading, setLoading] = useState(false);
-  const [product, setProduct] = useState<any>(null);
+  const [product, setProduct] = useState<Product | null>(null); // ✅ Fixed type
   const [error, setError] = useState<string | null>(null);
 
-  // ✅ Fetch Product Data when component mounts
   useEffect(() => {
-    setError(null); // Reset error state
+    setError(null);
     getProduct(params.id)
       .then(setProduct)
       .catch((err) => setError(err.message));
@@ -273,50 +254,20 @@ export default function ProductPage({ params }: { params: { id: string } }) {
 
   return (
     <div className="max-w-4xl mx-auto p-6">
-      {/* Product Title */}
       <h1 className="text-2xl font-bold mb-4">{product.title.rendered}</h1>
 
       {/* Product Image */}
       <div className="flex justify-center mb-4">
-        {product?._embedded?.["wp:featuredmedia"]?.[0]?.source_url ? (
+        {product._embedded?.["wp:featuredmedia"]?.[0]?.source_url && (
           <Image
             src={product._embedded["wp:featuredmedia"][0].source_url}
             alt={product.title.rendered}
-            width={500}
-            height={500}
-            className="rounded-lg shadow-lg"
+            width={400}
+            height={400}
+            className="rounded-lg"
           />
-        ) : (
-          <p className="text-gray-500">No image available</p>
         )}
       </div>
-
-      {/* Product Description */}
-      <div
-        className="text-gray-700"
-        dangerouslySetInnerHTML={{ __html: product.content.rendered }}
-      />
-
-      {/* Add to Cart Button */}
-      <button
-        className={`mt-4 bg-blue-500 text-white px-6 py-2 rounded-lg shadow transition ${
-          loading ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-600"
-        }`}
-        onClick={async () => {
-          setLoading(true);
-          try {
-            await addToCart(product.id);
-            alert("✅ Product added to cart!");
-          } catch {
-            alert("❌ Error adding product to cart.");
-          } finally {
-            setLoading(false);
-          }
-        }}
-        disabled={loading}
-      >
-        {loading ? "Adding..." : "Add to Cart"}
-      </button>
     </div>
   );
 }
