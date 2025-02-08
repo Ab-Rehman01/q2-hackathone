@@ -244,7 +244,7 @@ async function addToCart(productId: number) {
     });
 
     if (!res.ok) {
-      throw new Error("Failed to add item to cart");
+      throw new Error("Failed to add item to cartt");
     }
 
     return await res.json();
