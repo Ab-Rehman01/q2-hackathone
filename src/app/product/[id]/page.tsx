@@ -211,14 +211,12 @@
 // }
 
 
-
-
 "use client"; // 👈 Client-Side Rendering Enable
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 
-// ✅ WooCommerce API سے Product Data Fetch کرنے کا Function (SSR Compatible نہیں)
+// ✅ WooCommerce API سے Product Data Fetch کرنے کا Function (Client-Side)
 async function getProduct(id: string) {
   const res = await fetch(
     `https://bullet-mart.net.pk/wp-json/wp/v2/product/${id}?_embed`
@@ -234,17 +232,20 @@ async function getProduct(id: string) {
 // ✅ "Add to Cart" function (Client-Side Only)
 async function addToCart(productId: number) {
   try {
-    const res = await fetch("https://bullet-mart.net.pk/wp-json/wc/store/cart/add-item", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        id: productId,
-        quantity: 1,
-      }),
-    });
+    const res = await fetch(
+      "https://bullet-mart.net.pk/wp-json/wc/store/cart/add-item",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: productId,
+          quantity: 1,
+        }),
+      }
+    );
 
     if (!res.ok) {
-      throw new Error("Failed to add item to cartt");
+      throw new Error("Failed to add item to cart");
     }
 
     return await res.json();
@@ -257,12 +258,12 @@ async function addToCart(productId: number) {
 // ✅ Single Product Page Component
 export default function ProductPage({ params }: { params: { id: string } }) {
   const [loading, setLoading] = useState(false);
-
   const [product, setProduct] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // ✅ Fetch Product Data
-  useState(() => {
+  // ✅ Fetch Product Data when component mounts
+  useEffect(() => {
+    setError(null); // Reset error state
     getProduct(params.id)
       .then(setProduct)
       .catch((err) => setError(err.message));
