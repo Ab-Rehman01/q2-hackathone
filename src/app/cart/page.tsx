@@ -59,6 +59,67 @@
 //     </div>
 //   );
 // }
+// "use client";
+// import { useEffect, useState } from "react";
+
+// type CartItem = {
+//   key: string;
+//   name: string;
+//   quantity: number;
+//   totals: {
+//     line_total: string;
+//   };
+// };
+
+// export default function CartPage() {
+//   const [cartItems, setCartItems] = useState<CartItem[]>([]); // Type added
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState<string | null>(null);
+
+//   useEffect(() => {
+//     const fetchCart = async () => {
+//       try {
+//         const response = await fetch("https://bullet-mart.net.pk/wp-json/wc/store/cart/items");
+//         if (!response.ok) throw new Error("Failed to fetch cart data");
+
+//         const data: CartItem[] = await response.json(); // Type added
+//         setCartItems(data);
+//       } catch (err) {
+//         if (err instanceof Error) {
+//           setError(err.message);
+//         } else {
+//           setError("An unknown error occurred.");
+//         }
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+
+//     fetchCart();
+//   }, []);
+
+//   if (loading) return <p>Loading...</p>;
+//   if (error) return <p>Error: {error}</p>;
+
+//   return (
+//     <div>
+//       <h1>Your Cart</h1>
+//       {cartItems.length === 0 ? (
+//         <p>Your cart is empty.</p>
+//       ) : (
+//         cartItems.map((item) => (
+//           <div key={item.key} className="cart-item">
+//             <h2>{item.name}</h2>
+//             <p>Quantity: {item.quantity}</p>
+//             <p>Price: {item.totals.line_total}</p>
+//           </div>
+//         ))
+//       )}
+//     </div>
+//   );
+// }
+
+
 "use client";
 import { useEffect, useState } from "react";
 
@@ -72,7 +133,7 @@ type CartItem = {
 };
 
 export default function CartPage() {
-  const [cartItems, setCartItems] = useState<CartItem[]>([]); // Type added
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -82,14 +143,10 @@ export default function CartPage() {
         const response = await fetch("https://bullet-mart.net.pk/wp-json/wc/store/cart/items");
         if (!response.ok) throw new Error("Failed to fetch cart data");
 
-        const data: CartItem[] = await response.json(); // Type added
+        const data: CartItem[] = await response.json();
         setCartItems(data);
       } catch (err) {
-        if (err instanceof Error) {
-          setError(err.message);
-        } else {
-          setError("An unknown error occurred.");
-        }
+        setError(err instanceof Error ? err.message : "An unknown error occurred.");
       } finally {
         setLoading(false);
       }
@@ -108,7 +165,7 @@ export default function CartPage() {
         <p>Your cart is empty.</p>
       ) : (
         cartItems.map((item) => (
-          <div key={item.key} className="cart-item">
+          <div key={item.key} className="cart-item border p-4 my-2 rounded-lg shadow">
             <h2>{item.name}</h2>
             <p>Quantity: {item.quantity}</p>
             <p>Price: {item.totals.line_total}</p>
