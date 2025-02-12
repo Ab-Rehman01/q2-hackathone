@@ -101,21 +101,23 @@
 // };
 
 // export default api;
-
-
 import axios from "axios";
 
-// WooCommerce API Config
+// ✅ Ensure environment variables are loaded
+if (!process.env.NEXT_PUBLIC_WOO_COMMERCE_URL || !process.env.WOO_COMMERCE_CONSUMER_KEY || !process.env.WOO_COMMERCE_CONSUMER_SECRET) {
+  throw new Error("Missing WooCommerce API credentials in .env.local");
+}
+
+// ✅ Create API instance
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_WOO_COMMERCE_URL + "/wp-json/wc/v3",
-  headers: {
-    Authorization: `Basic ${Buffer.from(
-      `${process.env.WOO_COMMERCE_CONSUMER_KEY}:${process.env.WOO_COMMERCE_CONSUMER_SECRET}`
-    ).toString("base64")}`,
+  baseURL: `${process.env.NEXT_PUBLIC_WOO_COMMERCE_URL}/wp-json/wc/v3`,
+  auth: {
+    username: process.env.WOO_COMMERCE_CONSUMER_KEY || "",
+    password: process.env.WOO_COMMERCE_CONSUMER_SECRET || "",
   },
 });
 
-// ✅ Function to get products
+// ✅ Fetch products function
 export const getProducts = async () => {
   try {
     const response = await api.get("/products");
@@ -126,18 +128,17 @@ export const getProducts = async () => {
   }
 };
 
-// ✅ Function to add product to cart
+// ✅ Add to Cart function
 export const addToCart = async (productId: number, quantity: number = 1) => {
   try {
     const response = await api.post("/cart/add", {
       product_id: productId,
       quantity: quantity,
     });
-
     return response.data;
   } catch (error) {
-    console.error("Error adding to cart:", error);
-    throw new Error("Failed to add product to cart");
+    console.error("Error adding product to cart:", error);
+    return null;
   }
 };
 

@@ -27,25 +27,25 @@
 // };
 
 // export default nextConfig;
-import dotenv from "dotenv";
-dotenv.config();
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
 
-  images: {
-    domains: ['bullet-mart.net.pk'], 
+  env: {
+    WOO_COMMERCE_CONSUMER_KEY: process.env.WOO_COMMERCE_CONSUMER_KEY,
+    WOO_COMMERCE_CONSUMER_SECRET: process.env.WOO_COMMERCE_CONSUMER_SECRET,
+    NEXT_PUBLIC_WOO_COMMERCE_URL: process.env.NEXT_PUBLIC_WOO_COMMERCE_URL,
   },
 
-  async rewrites() {
-    return [
-      {
-        source: '/products/:id',
-        destination: '/product/:id',
-      },
-    ];
+  images: {
+    domains: ["bullet-mart.net.pk", "via.placeholder.com"], 
   },
 };
 
+console.log("🔑 Consumer Key:", process.env.WOO_COMMERCE_CONSUMER_KEY);
+console.log("🔑 Consumer Secret:", process.env.WOO_COMMERCE_CONSUMER_SECRET);
+console.log("🌍 WooCommerce URL:", process.env.NEXT_PUBLIC_WOO_COMMERCE_URL);
+
 export default nextConfig;
+
+

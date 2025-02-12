@@ -13,8 +13,9 @@ interface Product {
 
 async function getProduct(id: string): Promise<Product> {
   const res = await fetch(
-    `https://bullet-mart.net.pk/wp-json/wp/v2/product/${id}?_embed`
+    `https://bullet-mart.net.pk/wp-json/wc/v3/products/${id}?consumer_key=${process.env.WOOCOMMERCE_CONSUMER_KEY}&consumer_secret=${process.env.WOOCOMMERCE_CONSUMER_SECRET}`
   );
+  
 
   if (!res.ok) {
     throw new Error("Product not found");

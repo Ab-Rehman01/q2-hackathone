@@ -390,13 +390,13 @@
 // };
 
 // export default ProductsGrid;
-
 'use client';
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import api from '@/utils/woocommerce'; // WooCommerce API instance
+import { getProducts } from '@/utils/woocommerce'; // ✅ Import correct function
 import Image from 'next/image';
+import parse from 'html-react-parser'; // ✅ Import HTML parser
 
 // ✅ Define Product Type
 interface Product {
@@ -416,25 +416,28 @@ const ProductsGrid = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await api.get<Product[]>('products'); // ✅ Typed API response
-        setProducts(response.data);
-      } catch (err) {
-        setError('پراڈکٹس لوڈ کرنے میں مسئلہ ہے۔ براہ کرم دوبارہ کوشش کریں۔');
-        console.error('Error fetching products:', err);
+        const data = await getProducts(); // ✅ Directly call getProducts function
+        console.log("Products Response:", data);
+        setProducts(data);
+      } catch (err: unknown) {  // ✅ Replace "any" with "unknown"
+        console.error("Error fetching products:", err);
+        
+        // ✅ Check if error is an instance of Error before using "message"
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("Try again ");
+        }
       } finally {
         setLoading(false);
       }
     };
-
+  
     fetchProducts();
   }, []);
-
-  const removeHtmlTags = (html: string): string => {
-    return html.replace(/<\/?[^>]+(>|$)/g, '');
-  };
-
+  
   if (loading) {
-    return <p>...لوڈ ہو رہا ہے</p>;
+    return <p>Loading...</p>;
   }
 
   if (error) {
@@ -443,8 +446,8 @@ const ProductsGrid = () => {
 
   return (
     <div className="products-page">
-      <h2>تمام پراڈکٹس</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <h2>All Products</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
         {products.map((product) => (
           <div key={product.id} className="product-card border rounded-lg p-4 shadow-md">
             <h2 className="font-semibold text-lg">{product.name}</h2>
@@ -468,15 +471,16 @@ const ProductsGrid = () => {
               />
             )}
 
-            <p className="product-description text-sm text-gray-500">
-              {removeHtmlTags(product.description || '').slice(0, 100)}...
-            </p>
+            {/* ✅ Properly rendering product description */}
+            <div className="product-description text-sm text-gray-500">
+              {product.description ? parse(product.description) : "Details not available"}
+            </div>
 
             <div className="product-prices mt-2">
               {product.sale_price ? (
                 <>
-                  <p className="text-red-500 font-semibold">سیل پرائس: Rs. {product.sale_price}</p>
-                  <p className="text-gray-500 line-through">ریگولر پرائس: Rs. {product.regular_price}</p>
+                  <p className="text-red-500 font-semibold">Sale Price: Rs. {product.sale_price}</p>
+                  <p className="text-gray-500 line-through">Reguler Price: Rs. {product.regular_price}</p>
                 </>
               ) : (
                 <p className="font-semibold">پرائس: Rs. {product.regular_price}</p>
@@ -503,3 +507,4 @@ const ProductsGrid = () => {
 };
 
 export default ProductsGrid;
+
