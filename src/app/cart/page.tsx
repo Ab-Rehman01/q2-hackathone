@@ -13,7 +13,8 @@ interface CartItem {
 export default function CartPage() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null); // ✅ Used properly now
+  const [error, setError] = useState<string | null>(null);
+
 
   useEffect(() => {
     const fetchCart = async () => {
