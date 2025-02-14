@@ -420,7 +420,7 @@ const ProductsGrid = () => {
         if (err instanceof Error) {
           setError(err.message);
         } else {
-          setError("Problem .... Try again");
+          setError('Problem .... Try again');
         }
       } finally {
         setLoading(false);
@@ -430,10 +430,16 @@ const ProductsGrid = () => {
     fetchProducts();
   }, []);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>{error}</p>;
+  if (loading)
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <p className="text-gray-500 text-lg animate-pulse">Loading...</p>
+      </div>
+    );
 
-  // ✅ Updated Add to Cart Function
+  if (error)
+    return <p className="text-center text-red-500 text-lg">{error}</p>;
+
   const handleAddToCart = async (productId: number) => {
     try {
       const response = await fetch(
@@ -460,69 +466,105 @@ const ProductsGrid = () => {
   };
 
   return (
-    <div className="products-page">
-      <h2>All Products</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+    <div className="max-w-7xl mx-auto px-4 py-10">
+      <h2 className="text-3xl font-bold text-gray-800 text-center mb-8">
+        All Products
+      </h2>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {products.map((product) => (
-          <div key={product.id} className="product-card border rounded-lg p-4 shadow-md">
-            <h2 className="font-semibold text-lg">{product.name}</h2>
-
-            {product.images?.length ? (
-              <Image
-                src={product.images[0].src}
-                alt={product.images[0].alt || 'Product Image'}
-                width={300}
-                height={300}
-                className="product-image w-full h-48 object-cover rounded-md"
-              />
-            ) : (
-              <Image
-                src="https://via.placeholder.com/150"
-                alt="Placeholder Image"
-                width={300}
-                height={300}
-                className="product-image w-full h-48 object-cover rounded-md"
-              />
-            )}
-
-            <p className="product-description text-sm text-gray-500">
-              {product.description?.slice(0, 100)}...
-            </p>
-
-            <div className="product-prices mt-2">
-              {product.sale_price ? (
-                <>
-                  <p className="text-red-500 font-semibold">Sale Price: Rs. {product.sale_price}</p>
-                  <p className="text-gray-500 line-through">Regular Price: Rs. {product.regular_price}</p>
-                </>
+          <div
+            key={product.id}
+            className="bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col h-full"
+          >
+            {/* Product Image */}
+            <div className="relative">
+              {product.images?.length ? (
+                <Image
+                  src={product.images[0].src}
+                  alt={product.images[0].alt || 'Product Image'}
+                  width={400}
+                  height={400}
+                  className="w-full h-60 object-cover"
+                />
               ) : (
-                <p className="font-semibold">Price: Rs. {product.regular_price}</p>
+                <Image
+                  src="https://via.placeholder.com/150"
+                  alt="Placeholder Image"
+                  width={400}
+                  height={400}
+                  className="w-full h-60 object-cover"
+                />
               )}
             </div>
 
-            <Link href={`/products/${product.id}`} className="text-blue-600 underline mt-2 block">
-              More Detail
-            </Link>
+            {/* Product Info */}
+            <div className="p-4 flex flex-col flex-grow">
+              <h2 className="text-lg font-semibold text-gray-800 min-h-[48px]">
+                {product.name}
+              </h2>
 
-            <button 
-              onClick={() => handleAddToCart(product.id)} 
-              className="add-to-cart-btn bg-blue-500 text-white py-2 px-4 rounded-md mt-2">
-              Add to Cart
-            </button>
+              {/* <p className="text-sm text-gray-500 mt-1 line-clamp-2 min-h-[40px]">
+                {product.description
+                  ? product.description.slice(0, 80) + '...'
+                  : 'کوئی تفصیل دستیاب نہیں'}
+              </p> */}
+
+{/* Product Description */}
+<p
+  className="text-sm text-gray-500 mt-1 min-h-[60px] line-clamp-3"
+  dangerouslySetInnerHTML={{ __html: product.description || 'No Detail' }}
+></p>
+
+
+              <div className="mt-3 flex justify-between items-center">
+                {product.sale_price ? (
+                  <>
+                    <p className="text-red-600 font-semibold">
+                      Rs. {product.sale_price}
+                    </p>
+                    <p className="text-gray-400 line-through text-sm">
+                      Rs. {product.regular_price}
+                    </p>
+                  </>
+                ) : (
+                  <p className="text-gray-700 font-semibold">
+                    Rs. {product.regular_price}
+                  </p>
+                )}
+              </div>
+
+              {/* Buttons */}
+              <div className="mt-auto flex gap-3">
+                <Link
+                  href={`/products/${product.id}`}
+                  className="flex-1 text-center bg-blue-500 text-white py-2 rounded-md text-sm hover:bg-blue-600 transition"
+                >
+                  More Detail
+                </Link>
+
+                <button
+                  onClick={() => handleAddToCart(product.id)}
+                  className="flex-1 bg-green-500 text-white py-2 rounded-md text-sm hover:bg-green-600 transition"
+                >
+                  Add to Cart
+                </button>
+              </div>
+            </div>
           </div>
         ))}
       </div>
 
-      <Link href="/cart">
-        <button className="cart-btn bg-green-500 text-white py-2 px-4 rounded-md mt-4">
-          View Cart
-        </button>
-      </Link>
+      {/* Cart Button */}
+      <div className="text-center mt-8">
+        <Link href="/cart">
+          <button className="bg-gray-800 text-white py-3 px-6 rounded-lg text-lg hover:bg-gray-900 transition">
+            🛒 Check in Cart
+          </button>
+        </Link>
+      </div>
     </div>
   );
 };
 
 export default ProductsGrid;
-
-
-
