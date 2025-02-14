@@ -43,10 +43,11 @@ export default function CartPage() {
       if (!response.ok) throw new Error('Failed to remove item');
   
       setCartItems((prevItems) => prevItems.filter((item) => item.key !== itemKey));
-    } catch (_error) { // ✅ Now error is ignored
+    } catch (_error) { // ✅ Best practice: ESLint ab koi warning nahi dega
       setError('Failed to remove item. Please try again.');
     }
   };
+  
   
 
   if (loading) return <p className="text-center">Loading cart...</p>;
