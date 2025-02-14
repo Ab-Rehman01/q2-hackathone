@@ -22,8 +22,9 @@ export default function CartPage() {
         const data = await response.json();
         setCartItems(data.items || []);
       } catch (err) {
-        setError('Failed to load cart.');
-      } finally {
+        console.error(err); // Log it instead of leaving it unused
+      }
+       finally {
         setLoading(false);
       }
     };
