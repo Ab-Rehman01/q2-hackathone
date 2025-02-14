@@ -38,14 +38,18 @@ const nextConfig = {
   },
 
   images: {
-    domains: ["bullet-mart.net.pk", "via.placeholder.com"], 
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "bullet-mart.net.pk",
+      },
+      {
+        protocol: "https",
+        hostname: "via.placeholder.com",
+      },
+    ],
   },
 };
 
-console.log("🔑 Consumer Key:", process.env.WOO_COMMERCE_CONSUMER_KEY);
-console.log("🔑 Consumer Secret:", process.env.WOO_COMMERCE_CONSUMER_SECRET);
-console.log("🌍 WooCommerce URL:", process.env.NEXT_PUBLIC_WOO_COMMERCE_URL);
-
 export default nextConfig;
-
 

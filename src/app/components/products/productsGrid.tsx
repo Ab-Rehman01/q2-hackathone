@@ -394,11 +394,9 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { getProducts } from '@/utils/woocommerce'; // ✅ Import correct function
+import { getProducts } from '@/utils/woocommerce';
 import Image from 'next/image';
-import parse from 'html-react-parser'; // ✅ Import HTML parser
 
-// ✅ Define Product Type
 interface Product {
   id: number;
   name: string;
@@ -416,43 +414,59 @@ const ProductsGrid = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const data = await getProducts(); // ✅ Directly call getProducts function
-        console.log("Products Response:", data);
+        const data = await getProducts();
         setProducts(data);
-      } catch (err: unknown) {  // ✅ Replace "any" with "unknown"
-        console.error("Error fetching products:", err);
-        
-        // ✅ Check if error is an instance of Error before using "message"
+      } catch (err: unknown) {
         if (err instanceof Error) {
           setError(err.message);
         } else {
-          setError("Try again ");
+          setError("Problem .... Try again");
         }
       } finally {
         setLoading(false);
       }
     };
-  
+
     fetchProducts();
   }, []);
-  
-  if (loading) {
-    return <p>Loading...</p>;
-  }
 
-  if (error) {
-    return <p>{error}</p>;
-  }
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>{error}</p>;
+
+  // ✅ Updated Add to Cart Function
+  const handleAddToCart = async (productId: number) => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_WOO_COMMERCE_URL}/wp-json/wc/store/cart/add-item`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ id: productId, quantity: 1 }),
+        }
+      );
+
+      const data = await response.json();
+      if (response.ok) {
+        alert('Product added to cart successfully!');
+      } else {
+        alert(`Error: ${data.message}`);
+      }
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      alert('Something went wrong. Please try again.');
+    }
+  };
 
   return (
     <div className="products-page">
       <h2>All Products</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {products.map((product) => (
           <div key={product.id} className="product-card border rounded-lg p-4 shadow-md">
             <h2 className="font-semibold text-lg">{product.name}</h2>
 
-            {/* ✅ Improved image handling */}
             {product.images?.length ? (
               <Image
                 src={product.images[0].src}
@@ -471,40 +485,44 @@ const ProductsGrid = () => {
               />
             )}
 
-            {/* ✅ Properly rendering product description */}
-            <div className="product-description text-sm text-gray-500">
-              {product.description ? parse(product.description) : "Details not available"}
-            </div>
+            <p className="product-description text-sm text-gray-500">
+              {product.description?.slice(0, 100)}...
+            </p>
 
             <div className="product-prices mt-2">
               {product.sale_price ? (
                 <>
                   <p className="text-red-500 font-semibold">Sale Price: Rs. {product.sale_price}</p>
-                  <p className="text-gray-500 line-through">Reguler Price: Rs. {product.regular_price}</p>
+                  <p className="text-gray-500 line-through">Regular Price: Rs. {product.regular_price}</p>
                 </>
               ) : (
-                <p className="font-semibold">پرائس: Rs. {product.regular_price}</p>
+                <p className="font-semibold">Price: Rs. {product.regular_price}</p>
               )}
             </div>
 
             <Link href={`/products/${product.id}`} className="text-blue-600 underline mt-2 block">
-              مزید تفصیل
+              More Detail
             </Link>
 
-            {/* ✅ "Add to Cart" Form */}
-            <form action="?wc-ajax=add_to_cart" method="post" className="mt-2">
-              <input type="hidden" name="product_id" value={product.id} />
-              <input type="hidden" name="quantity" value="1" />
-              <button type="submit" className="add-to-cart-btn bg-blue-500 text-white py-2 px-4 rounded-md">
-                Add to Cart
-              </button>
-            </form>
+            <button 
+              onClick={() => handleAddToCart(product.id)} 
+              className="add-to-cart-btn bg-blue-500 text-white py-2 px-4 rounded-md mt-2">
+              Add to Cart
+            </button>
           </div>
         ))}
       </div>
+
+      <Link href="/cart">
+        <button className="cart-btn bg-green-500 text-white py-2 px-4 rounded-md mt-4">
+          View Cart
+        </button>
+      </Link>
     </div>
   );
 };
 
 export default ProductsGrid;
+
+
 
