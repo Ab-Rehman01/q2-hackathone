@@ -16,6 +16,7 @@ export default function CartPage() {
   const [error, setError] = useState<string | null>(null);
 
 
+
   useEffect(() => {
     const fetchCart = async () => {
       try {
@@ -24,9 +25,10 @@ export default function CartPage() {
         
         const data = await response.json();
         setCartItems(data.items || []);
-      } catch (error) {
-        setError((error as Error).message); // ✅ Now setting error properly
-      } finally {
+      } catch (err) {
+        setError((err as Error).message);
+      }
+       finally {
         setLoading(false);
       }
     };
@@ -44,10 +46,11 @@ export default function CartPage() {
       if (!response.ok) throw new Error('Failed to remove item');
   
       setCartItems((prevItems) => prevItems.filter((item) => item.key !== itemKey));
-    } catch (_error) { // ✅ Best practice: ESLint ab koi warning nahi dega
+    } catch {
       setError('Failed to remove item. Please try again.');
     }
   };
+  
   
   
 
