@@ -34,7 +34,7 @@ export default function CartPage() {
 
   const handleRemoveItem = async (itemKey: string) => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_WOO_COMMERCE_URL}/wp-json/wc/store/cart/remove-item/${itemKey}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_WOO_COMMERCE_URL}/wp-json/wc/store/cart/items/${itemKey}?_method=DELETE`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
       });
