@@ -13,22 +13,18 @@ interface CartItem {
 export default function CartPage() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-
 
   useEffect(() => {
     const fetchCart = async () => {
       try {
         const response = await fetch(`${process.env.NEXT_PUBLIC_WOO_COMMERCE_URL}/wp-json/wc/store/cart`);
         if (!response.ok) throw new Error('Failed to fetch cart');
-        
+
         const data = await response.json();
         setCartItems(data.items || []);
       } catch (err) {
-        setError((err as Error).message);
-      }
-       finally {
+        console.error('Error fetching cart:', err);
+      } finally {
         setLoading(false);
       }
     };
@@ -42,26 +38,20 @@ export default function CartPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
       });
-  
+
       if (!response.ok) throw new Error('Failed to remove item');
-  
+
       setCartItems((prevItems) => prevItems.filter((item) => item.key !== itemKey));
-    } catch {
-      setError('Failed to remove item. Please try again.');
+    } catch (err) {
+      console.error('Error removing item:', err);
     }
   };
-  
-  
-  
 
   if (loading) return <p className="text-center">Loading cart...</p>;
-  
+
   return (
     <div className="max-w-3xl mx-auto p-6">
       <h1 className="text-2xl font-bold mb-4">Your Cart</h1>
-
-      {/* ✅ Display error message if it exists */}
-      {error && <p className="text-red-500 text-center">{error}</p>}
 
       {cartItems.length === 0 ? (
         <p className="text-gray-600">Your cart is empty.</p>
