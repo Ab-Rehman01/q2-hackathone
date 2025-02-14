@@ -13,7 +13,7 @@ interface CartItem {
 export default function CartPage() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null); // ✅ Used properly now
 
   useEffect(() => {
     const fetchCart = async () => {
@@ -24,7 +24,7 @@ export default function CartPage() {
         const data = await response.json();
         setCartItems(data.items || []);
       } catch (error) {
-        setError((error as Error).message);
+        setError((error as Error).message); // ✅ Now setting error properly
       } finally {
         setLoading(false);
       }
@@ -49,11 +49,13 @@ export default function CartPage() {
   };
 
   if (loading) return <p className="text-center">Loading cart...</p>;
-  if (error) return <p className="text-red-500 text-center">{error}</p>;
-
+  
   return (
     <div className="max-w-3xl mx-auto p-6">
       <h1 className="text-2xl font-bold mb-4">Your Cart</h1>
+
+      {/* ✅ Display error message if it exists */}
+      {error && <p className="text-red-500 text-center">{error}</p>}
 
       {cartItems.length === 0 ? (
         <p className="text-gray-600">Your cart is empty.</p>
