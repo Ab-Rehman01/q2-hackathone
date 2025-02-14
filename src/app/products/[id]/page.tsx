@@ -183,7 +183,7 @@ export default function ProductPage() {
               Add to Cart
             </button>
             <button className="bg-green-600 text-white px-8 py-3 rounded-lg shadow hover:bg-green-700 transition text-lg">
-              Buy Now
+              Buy Noww
             </button>
           </div>
         </div>
