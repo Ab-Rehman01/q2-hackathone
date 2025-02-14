@@ -39,14 +39,15 @@ export default function CartPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
       });
-
+  
       if (!response.ok) throw new Error('Failed to remove item');
-
+  
       setCartItems((prevItems) => prevItems.filter((item) => item.key !== itemKey));
-    } catch (error) {
+    } catch (_error) { // ✅ Now error is ignored
       setError('Failed to remove item. Please try again.');
     }
   };
+  
 
   if (loading) return <p className="text-center">Loading cart...</p>;
   
