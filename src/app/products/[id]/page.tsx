@@ -89,6 +89,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import Image from "next/image";
 
 interface Product {
   id: number;
@@ -100,7 +101,7 @@ interface Product {
 
 export default function ProductPage() {
   const params = useParams();
-  const id = params?.id as string;
+  const id = params?.id as string | undefined;
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -123,7 +124,7 @@ export default function ProductPage() {
         const data = await response.json();
         console.log("Product Data:", data);
         setProduct(data);
-        setSelectedImage(data.images?.[0]?.src || "https://www.bullet-mart.net.pk/default-image.jpg");
+        setSelectedImage(data.images?.[0]?.src || "/default-image.jpg");
       } catch (err) {
         console.error(err);
         setError("Failed to load product.");
@@ -135,31 +136,41 @@ export default function ProductPage() {
     fetchProduct();
   }, [id]);
 
-  if (loading) return <p className="text-center text-gray-500">Loading product...</p>;
-  if (error) return <p className="text-center text-red-500">{error}</p>;
-  if (!product) return <p className="text-center text-gray-500">No product found.</p>;
+  if (loading)
+    return <p className="text-center text-gray-500 text-lg">Loading product...</p>;
+
+  if (error)
+    return <p className="text-center text-red-500 text-lg">{error}</p>;
+
+  if (!product)
+    return <p className="text-center text-gray-500 text-lg">No product found.</p>;
 
   return (
     <div className="max-w-5xl mx-auto p-8 bg-white shadow-lg rounded-lg mt-10">
       <div className="grid md:grid-cols-2 gap-8">
         {/* Product Image Section */}
         <div className="flex flex-col items-center w-full">
-          {/* Main Image with Hover Zoom Effect */}
+          {/* Main Image */}
           <div className="w-full max-w-lg overflow-hidden rounded-lg shadow-md border">
-            <img
-              src={selectedImage || "https://www.bullet-mart.net.pk/default-image.jpg"}
+            <Image
+              src={selectedImage || "/default-image.jpg"}
               alt={product.name}
+              width={500}
+              height={500}
               className="w-full h-auto object-cover transition-transform duration-300 hover:scale-110"
+              priority
             />
           </div>
 
           {/* Thumbnails */}
           <div className="flex gap-3 mt-4">
             {product.images.map((img, index) => (
-              <img
+              <Image
                 key={index}
                 src={img.src}
                 alt={`Product image ${index + 1}`}
+                width={80}
+                height={80}
                 className={`w-20 h-20 object-cover rounded-md cursor-pointer border ${
                   selectedImage === img.src ? "border-blue-500" : "border-gray-300"
                 }`}
@@ -172,10 +183,15 @@ export default function ProductPage() {
         {/* Product Details */}
         <div>
           <h1 className="text-3xl font-bold text-gray-800">{product.name}</h1>
-          <p className="text-xl font-semibold text-green-600 mt-2">Price: {product.price} PKR</p>
+          <p className="text-xl font-semibold text-green-600 mt-2">
+            Price: {product.price} PKR
+          </p>
 
-          {/* Correctly Render HTML Description */}
-          <div className="text-gray-600 mt-4 text-lg" dangerouslySetInnerHTML={{ __html: product.description }} />
+          {/* Product Description */}
+          <div
+            className="text-gray-600 mt-4 text-lg"
+            dangerouslySetInnerHTML={{ __html: product.description }}
+          />
 
           {/* Action Buttons */}
           <div className="mt-6 flex gap-6">
@@ -183,7 +199,7 @@ export default function ProductPage() {
               Add to Cart
             </button>
             <button className="bg-green-600 text-white px-8 py-3 rounded-lg shadow hover:bg-green-700 transition text-lg">
-              Buy Noww
+              Buy Now
             </button>
           </div>
         </div>
