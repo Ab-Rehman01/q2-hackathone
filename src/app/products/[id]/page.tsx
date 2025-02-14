@@ -1,90 +1,3 @@
-// "use client";
-
-// import { useEffect, useState } from "react";
-// import { useParams } from "next/navigation";
-
-// interface Product {
-//   id: number;
-//   name: string;
-//   price: string;
-//   description: string;
-//   images: { src: string }[];
-// }
-
-// export default function ProductPage() {
-//   const params = useParams();
-//   const id = params?.id as string;
-//   const [product, setProduct] = useState<Product | null>(null);
-//   const [loading, setLoading] = useState(true);
-//   const [error, setError] = useState<string | null>(null);
-
-//   useEffect(() => {
-//     if (!id) {
-//       setError("Invalid Product ID");
-//       setLoading(false);
-//       return;
-//     }
-
-//     const fetchProduct = async () => {
-//       try {
-//         console.log("Fetching product with ID:", id);
-//         const response = await fetch(`/api/products/${id}`);
-
-//         if (!response.ok) throw new Error("Failed to fetch product");
-
-//         const data = await response.json();
-//         console.log("Product Data:", data);
-//         setProduct(data);
-//       } catch (err) {
-//         console.error(err);
-//         setError("Failed to load product.");
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-
-//     fetchProduct();
-//   }, [id]);
-
-//   if (loading) return <p className="text-center text-gray-500">Loading product...</p>;
-//   if (error) return <p className="text-center text-red-500">{error}</p>;
-//   if (!product) return <p className="text-center text-gray-500">No product found.</p>;
-
-//   return (
-//     <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg mt-10">
-//       <div className="grid md:grid-cols-2 gap-6">
-//         {/* Product Image */}
-//         <div className="flex justify-center">
-//           <img
-//             src={product.images?.[0]?.src || "https://www.bullet-mart.net.pk/default-image.jpg"}
-//             alt={product.name}
-//             className="w-full max-w-xs md:max-w-md rounded-lg shadow"
-//           />
-//         </div>
-
-//         {/* Product Details */}
-//         <div>
-//           <h1 className="text-2xl font-bold text-gray-800">{product.name}</h1>
-//           <p className="text-lg font-semibold text-green-600 mt-2">Price: {product.price} PKR</p>
-
-//           {/* Correctly Render HTML Description */}
-//           <div className="text-gray-600 mt-4" dangerouslySetInnerHTML={{ __html: product.description }} />
-
-//           {/* Action Buttons */}
-//           <div className="mt-6 flex gap-4">
-//             <button className="bg-blue-600 text-white px-6 py-2 rounded-lg shadow hover:bg-blue-700 transition">
-//               Add to Cart
-//             </button>
-//             <button className="bg-green-600 text-white px-6 py-2 rounded-lg shadow hover:bg-green-700 transition">
-//               Buy Now
-//             </button>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -136,6 +49,31 @@ export default function ProductPage() {
     fetchProduct();
   }, [id]);
 
+  // ✅ Add to Cart Functionality
+  const handleAddToCart = async () => {
+    if (!product) return;
+
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_WOO_COMMERCE_URL}/wp-json/wc/store/cart/items`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            id: product.id,
+            quantity: 1,
+          }),
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to add to cart");
+
+      alert("Product added to cart!");
+    } catch (err) {
+      console.error("Error adding to cart:", err);
+    }
+  };
+
   if (loading)
     return <p className="text-center text-gray-500 text-lg">Loading product...</p>;
 
@@ -150,7 +88,6 @@ export default function ProductPage() {
       <div className="grid md:grid-cols-2 gap-8">
         {/* Product Image Section */}
         <div className="flex flex-col items-center w-full">
-          {/* Main Image */}
           <div className="w-full max-w-lg overflow-hidden rounded-lg shadow-md border">
             <Image
               src={selectedImage || "/default-image.jpg"}
@@ -162,7 +99,6 @@ export default function ProductPage() {
             />
           </div>
 
-          {/* Thumbnails */}
           <div className="flex gap-3 mt-4">
             {product.images.map((img, index) => (
               <Image
@@ -187,7 +123,6 @@ export default function ProductPage() {
             Price: {product.price} PKR
           </p>
 
-          {/* Product Description */}
           <div
             className="text-gray-600 mt-4 text-lg"
             dangerouslySetInnerHTML={{ __html: product.description }}
@@ -195,7 +130,10 @@ export default function ProductPage() {
 
           {/* Action Buttons */}
           <div className="mt-6 flex gap-6">
-            <button className="bg-blue-600 text-white px-8 py-3 rounded-lg shadow hover:bg-blue-700 transition text-lg">
+            <button
+              onClick={handleAddToCart}
+              className="bg-blue-600 text-white px-8 py-3 rounded-lg shadow hover:bg-blue-700 transition text-lg"
+            >
               Add to Cart
             </button>
             <button className="bg-green-600 text-white px-8 py-3 rounded-lg shadow hover:bg-green-700 transition text-lg">
