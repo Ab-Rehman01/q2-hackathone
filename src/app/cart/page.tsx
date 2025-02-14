@@ -18,9 +18,8 @@ export default function CartPage() {
     const fetchCart = async () => {
       try {
         const response = await fetch(`${process.env.NEXT_PUBLIC_WOO_COMMERCE_URL}/wp-json/wc/store/cart`);
-        if (!response.ok) throw new Error('Failed to fetch cart');
-
         const data = await response.json();
+        console.log('Cart API Response:', data); // ✅ Console me dekho API response
         setCartItems(data.items || []);
       } catch (err) {
         console.error('Error fetching cart:', err);
@@ -28,7 +27,7 @@ export default function CartPage() {
         setLoading(false);
       }
     };
-
+  
     fetchCart();
   }, []);
 
