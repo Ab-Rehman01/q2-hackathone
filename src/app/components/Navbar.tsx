@@ -100,7 +100,6 @@
 // export default Navbar;
 
 
-
 'use client';
 
 import { useState, useEffect } from 'react'
@@ -115,14 +114,12 @@ export function Navbar() {
   const [searchQuery, setSearchQuery] = useState('')
   const [cartCount, setCartCount] = useState(0)
 
-  // ✅ Fetch cart count from WooCommerce API
+  // ✅ Fetch cart count securely
   useEffect(() => {
     const fetchCart = async () => {
       try {
-        const response = await axios.get(
-          'https://bullet-mart.net.pk/wp-json/wc/store/cart'
-        )
-        setCartCount(response.data.items.length)
+        const response = await axios.get('/api/cart') // 🔒 Using secure API route
+        setCartCount(response.data.length)
       } catch (error) {
         console.error('Error fetching cart:', error)
       }

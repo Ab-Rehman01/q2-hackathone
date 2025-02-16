@@ -16,10 +16,12 @@ export default function CartPage() {
 
   useEffect(() => {
     const fetchCart = async () => {
+      console.log('API URL:', process.env.NEXT_PUBLIC_WOO_COMMERCE_URL); // ✅ Debug API URL
+      
       try {
         const response = await fetch(`${process.env.NEXT_PUBLIC_WOO_COMMERCE_URL}/wp-json/wc/store/cart`);
         const data = await response.json();
-        console.log('Cart API Response:', data); // ✅ Console me dekho API response
+        console.log('Cart API Response:', data); // ✅ Debug Cart Response
         setCartItems(data.items || []);
       } catch (err) {
         console.error('Error fetching cart:', err);
